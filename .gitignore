@@ -1,0 +1,19 @@
+# Gradle / IDE
+.gradle/
+build/
+out/
+*.iml
+.idea/
+.vscode/
+
+# Local build toolchain (large, machine-specific)
+.port/
+
+# Freebuff workspace state
+.freebuff/
+.cloud-attachments/
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store

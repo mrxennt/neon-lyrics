@@ -1,0 +1,66 @@
+plugins {
+    id 'fabric-loom' version "${loomVersion}"
+    id 'maven-publish'
+}
+
+group = 'dev.neonlyrics'
+version = '2.1.0+mc26.3'
+
+base {
+    archivesName = 'neon-lyrics'
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.fabricmc.net/' }
+}
+
+loom {
+    // Minecraft 26.3 publishes no mapping files (its metadata only has client/server) and is
+    // already unobfuscated, so there is no intermediary step to run.
+    noIntermediateMappings()
+}
+
+dependencies {
+    minecraft 'com.mojang:minecraft:26.3'
+    // Identity mappings (Mojang names); Loom insists on a non-empty mappings configuration.
+    mappings files('mappings-26.3.jar')
+    modImplementation 'net.fabricmc:fabric-loader:0.20.1'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.165.0+26.3'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+    options.encoding = 'UTF-8'
+    options.fork = true
+    options.forkOptions.javaHome = file('C:/Program Files/Java/jdk-26.0.1')
+}
+
+sourceSets.main {
+    java {
+        srcDirs = ['dev-263']
+    }
+    resources {
+        srcDirs = ['.']
+        include 'assets/**'
+        include 'fabric.mod.json'
+        include 'neonlyrics.*'
+        include 'META-INF/**'
+    }
+}
+
+tasks.named('jar', org.gradle.jvm.tasks.Jar) {
+    archiveBaseName.set('neon-lyrics')
+}
+
+// The sources jar is already identity-mapped; remapSourcesJar needs an intermediary layer
+// that noIntermediateMappings() withholds, so leave it unremapped.
+tasks.named("remapSourcesJar") {
+    enabled = false
+}
